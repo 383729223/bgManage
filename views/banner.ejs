@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AdminLTE 2 | Starter</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/dist/css/skins/skin-blue.min.css">
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+
+        <%- include('./header.ejs') %>
+            <%- include('./menu.ejs') %>
+                <!-- Content Wrapper. Contains page content -->
+                <div class="content-wrapper">
+                    <!-- Content Header (Page header) -->
+                    <section class="content-header">
+                        <h1>
+                            轮播图管理
+                            <small>Optional description</small>
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+                            <li class="active">Here</li>
+                        </ol>
+                    </section>
+
+                    <!-- Main content -->
+                    <section class="content">
+                        <div class="box">
+                            <div class="box-header with-border">
+                                <h3 class="box-title">
+                                    <a href="/banner/add">
+                                        <button class="btn btn-md btn-primary">
+                                            <span class="glyphicon glyphicon-plus"></span>添加轮播图
+                                        </button>
+                                    </a>
+                                </h3>
+                                <!-- <h3 class="box-title">
+                                    <a href="/product/removeAll">
+                                        <button class="btn btn-md btn-danger">
+                                                <span class="glyphicon glyphicon-remove"></span>清空所有商品
+                                            </button>
+                                    </a>
+                                </h3> -->
+                                <!-- <div class="pull-right">
+                                    <a href="/product/importProduct">
+                                        <button class="btn btn-md btn-link ">
+										  <span class="glyphicon glyphicon-upload"></span>导入商品
+                                        </button>
+                                    </a>
+                                    <a href="/product/exportProduct">
+                                        <button class="btn btn-md btn-link ">
+                                            <span class="glyphicon glyphicon-download"></span>导出商品
+                                        </button>
+                                    </a>
+                                </div> -->
+                            </div>
+                            <!-- /.box-header -->
+                            <div class="box-body">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                        <tr>
+                                            <th class="col-xs-1 text-center">图片编号</th>
+                                            <th class="col-xs-4 text-center">缩略图</th>
+                                            <th class="col-xs-5 text-center">图片链接</th>
+                                            <th class="col-xs-2 text-center">操作</th>
+                                        </tr>
+                                        <% for(var i = 0; i < data.length; i++) { %>
+                                            <tr>
+                                                <td class="text-center">
+                                                    <%- data[i]._id %>
+                                                </td>
+                                                <td class="text-center">
+                                                    <img src="<%- data[i].bannerSrc %>" alt="" height="70">
+                                                </td>
+                                                <td class="text-center">
+                                                    <%- data[i].bannerSrc %>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button class="btn btn-xs btn-warning" onclick="showModel('<%- data[i]._id %>')">
+                                                        <span class="glyphicon glyphicon-pencil"></span>
+                                                    </button>
+                                                    <a href="/banner/remove?_id=<%- data[i]._id %>"><button class="btn btn-xs btn-danger">
+                                                        <span class="glyphicon glyphicon-trash"></span>
+                                                    </button></a>
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.box-body -->
+
+                        </div>
+                        <!-- Your Page Content Here -->
+
+                    </section>
+                    <!-- /.content -->
+                </div>
+                <!-- /.content-wrapper -->
+
+                <%- include('./footer.ejs') %>
+                    <!-- Control Sidebar -->
+                    <%- include('./sidebar.ejs') %>
+    </div>
+    <!-- ./wrapper -->
+    <!-- 弹出修改页面 -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">更新轮播图信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal" action="/banner/updateAction" method="post">
+                        <div class="box-body">
+                            <div class="form-group">
+                                <label for="bannerId" class="col-sm-2 control-label">图片编号</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" readonly class="form-control" name="bannerId" id="bannerId" placeholder="图片编号">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="imgSrc" class="col-sm-2 control-label">图片地址</label>
+
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" name="imgSrc" placeholder="图片地址">
+                                </div>
+                            </div>
+
+                        </div>
+                        <!-- /.box-body -->
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-info pull-right">更新</button>
+                        </div>
+                        <!-- /.box-footer -->
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- REQUIRED JS SCRIPTS -->
+
+    <!-- jQuery 2.2.3 -->
+    <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/dist/js/app.min.js"></script>
+    <script>
+        function showModel(id) {
+            // console.log(111)
+            $('#myModal').modal()
+            $('#bannerId').val(id)
+        }
+    </script>
+</body>
+
+</html>

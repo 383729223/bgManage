@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>AdminLTE 2 | Starter</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <!-- Bootstrap 3.3.6 -->
+    <link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="/dist/css/skins/skin-blue.min.css">
+</head>
+
+<body class="hold-transition skin-blue sidebar-mini">
+    <div class="wrapper">
+
+        <%- include('./header.ejs') %>
+            <%- include('./menu.ejs') %>
+                <!-- Content Wrapper. Contains page content -->
+                <div class="content-wrapper" style="min-height:800px;">
+                    <!-- Content Header (Page header) -->
+                    <section class="content-header">
+                        <h1>
+                            首页管理
+                            <small>Optional description</small>
+                        </h1>
+                        <ol class="breadcrumb">
+                            <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+                            <li class="active">Here</li>
+                        </ol>
+                    </section>
+
+                    <!-- Main content -->
+                    <section class="content">
+                        <div id="main1" style="width: 600px;height:400px;" class="pull-left"></div>
+                        <div id="main2" style="width: 400px;height:400px;" class="pull-left"></div>
+                        <!-- Your Page Content Here -->
+
+                    </section>
+                    <!-- /.content -->
+                </div>
+                <!-- /.content-wrapper -->
+
+                <%- include('./footer.ejs') %>
+                    <!-- Control Sidebar -->
+                    <%- include('./sidebar.ejs') %>
+    </div>
+    <!-- ./wrapper -->
+
+    <!-- REQUIRED JS SCRIPTS -->
+
+    <!-- jQuery 2.2.3 -->
+    <script src="/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <!-- 引入echarts -->
+    <script src="/javascripts/echarts.common.min.js"></script>
+    <!-- Bootstrap 3.3.6 -->
+    <script src="/bootstrap/js/bootstrap.min.js"></script>
+    <!-- AdminLTE App -->
+    <script src="/dist/js/app.min.js"></script>
+    <script>
+        // 数据去重
+        function deDuplication(arr) {
+            let obj = {};
+            for (let i = 0; i < arr.length; i++) {
+                if (obj[arr[i]]) {
+                    obj[arr[i]]++
+                } else {
+                    obj[arr[i]] = 1
+                }
+            }
+            return obj
+        }
+
+        $.ajax({
+            url: '/api/users?pageNumber=1000',
+            success: function(response) {
+                // console.log(response.data)
+
+
+                let userData = response.data;
+                let ageArr = [];
+                userData.forEach((item, index) => {
+                        ageArr.push(item.age)
+                    })
+                    // console.log(ageArr)
+                let ageObj = deDuplication(ageArr)
+                    // console.log(ageObj)
+                let ageMessages = [];
+                let ageCounts = [];
+                for (i in ageObj) {
+                    ageMessages.push(i)
+                    ageCounts.push(ageObj[i])
+                }
+
+                console.log(ageObj)
+
+
+                // 柱状图统计图
+
+                // 基于准备好的dom，初始化echarts实例
+                var myChart = echarts.init(document.getElementById('main1'));
+                // 指定图表的配置项和数据
+                var option = {
+                    title: {
+                        text: '用户年龄信息分布表',
+                        textStyle: {
+                            align: 'center'
+                        }
+                    },
+                    tooltip: {},
+                    legend: {
+                        data: ['数量']
+                    },
+                    xAxis: {
+                        data: ageMessages,
+                        name: "年龄(岁)",
+                        nameTextStyle: {
+                            fontWeight: "700"
+                        }
+                    },
+                    yAxis: {
+                        name: "人数(位)",
+                        nameTextStyle: {
+                            fontWeight: "700"
+                        },
+                        boundaryGap: ['20%', '20%']
+                    },
+                    series: [{
+                        name: '数量',
+                        type: 'bar',
+                        data: ageCounts
+                    }]
+                };
+                // 使用刚指定的配置项和数据显示图表。
+                myChart.setOption(option)
+
+                // 饼图统计图
+                let pieDataArr = []
+                for (item in ageObj) {
+                    let pieObj = {};
+                    pieObj.name = item + '岁';
+                    pieObj.value = ageObj[item];
+                    pieDataArr.push(pieObj)
+                }
+
+                console.log(pieDataArr)
+                    // 绘制图表。
+                echarts.init(document.getElementById('main2')).setOption({
+                    title: {
+                        text: '用户年龄信息分布表',
+                        textStyle: {
+                            align: 'center'
+                        }
+                    },
+                    series: {
+                        type: 'pie',
+                        data: pieDataArr,
+                        color: ['#dd6b66', '#759aa0', '#e69d87', '#8dc1a9', '#ea7e53', '#eedd78', '#73a373', '#73b9bc', '#7289ab', '#91ca8c', '#f49f42'],
+                    }
+                });
+
+
+            }
+        })
+    </script>
+</body>
+
+</html>
