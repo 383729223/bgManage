@@ -2,6 +2,7 @@ var xlsx = require('node-xlsx');
 var nodeExcel = require('excel-export');
 
 const productfilemd = {
+    // 导入excel文件
     analysisdata(path) {
         return new Promise((resolve, reject) => {
             // 解析excel文件
@@ -20,12 +21,15 @@ const productfilemd = {
                     discount_price: item[3],
                     original_price: item[4],
                     prov_city: item[5],
-                    count: item[6]
+                    count: item[6],
+                    buyCount: item[7],
+                    flag: item[8]
                 })
             }
         })
         return arr;
     },
+    // 导出excel文件
     exportdata(_headers, rows) {
         var conf = {};
         conf.name = "mysheet";

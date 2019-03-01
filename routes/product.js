@@ -43,28 +43,31 @@ router.post('/addAction', function(req, res, next) {
     // { tel: tel}    { tel }
     // post 如何拿数据
     // const obj = req.body;
-    let { _id, big_pic, title, prov_city, discount_price, original_price, count } = req.body;
-    sql.find('uqmei', 'product', { _id: _id }).then(data => {
-            if (data.length == 0) {
-                // 表示没有查询到数据 --- 可以添加该用户 -- 先加密  -- 后添加
-                // password = md5(password);
-                sql.insert('uqmei', 'product', { _id, big_pic, title, prov_city, discount_price, original_price, count })
-                    .then(() => {
-                        res.redirect('/product');
-                    })
-                    .catch((err) => {
-                        res.redirect('/product/add');
-                    })
-            } else {
-                // 该产品已存在
+    let { _id, big_pic, title, prov_city, discount_price, original_price, count, buyCount, flag } = req.body;
+    if (_id != "" && big_pic != "" && title != "" && prov_city != "" && discount_price != "" && original_price != "" && count != "" && buyCount != "" && flag != "") {
+        sql.find('uqmei', 'product', { _id: _id }).then(data => {
+                if (data.length == 0) {
+                    // 表示没有查询到数据 --- 可以添加该用户 -- 先加密  -- 后添加
+                    // password = md5(password);
+                    sql.insert('uqmei', 'product', { _id, big_pic, title, prov_city, discount_price, original_price, count, buyCount, flag })
+                        .then(() => {
+                            res.redirect('/product');
+                        })
+                        .catch((err) => {
+                            res.redirect('/product/add');
+                        })
+                } else {
+                    // 该产品已存在
+                    res.redirect('/product/add');
+                }
+            }).catch(err => {
+                // console.log(err)
                 res.redirect('/product/add');
-            }
-        }).catch(err => {
-            // console.log(err)
-            res.redirect('/product/add');
-        })
-        // console.log(obj);
-
+            })
+            // console.log(obj);
+    } else {
+        res.redirect('/product');
+    }
 });
 // 删除
 router.get('/remove', function(req, res, next) {
@@ -88,7 +91,7 @@ router.get('/removeAll', function(req, res, next) {
 router.post('/updateAction', function(req, res, next) {
     let { _id, username, pageCode } = req.body;
     _id = _id * 1;
-    sql.update('uqmei', 'product', 'updateOne', { _id }, { $set: { big_pic, title, prov_city, discount_price, original_price, count } })
+    sql.update('uqmei', 'product', 'updateOne', { _id }, { $set: { big_pic, title, prov_city, discount_price, original_price, count, buyCount, flag } })
         .then(() => {
             res.redirect('/product?pageCode=' + pageCode);
         }).catch(err => {
@@ -99,7 +102,10 @@ router.post('/updateAction', function(req, res, next) {
 
 
 //导入文件
-const xlsx = "/usr/local/node-pro/bgAdmin/products.xlsx";
+// 服务器导入
+// const xlsx = "/usr/local/node-pro/bgAdmin/products.xlsx";
+//本地导入
+const xlsx = "G:/nodeProject/bgAdmin/products.xlsx";
 router.get('/importProduct', (req, res, next) => {
     fildmd.analysisdata(xlsx).then(obj => {
         // console.log(obj)
@@ -114,7 +120,9 @@ router.get('/importProduct', (req, res, next) => {
                         discount_price: item[3],
                         original_price: item[4],
                         prov_city: item[5],
-                        count: item[6]
+                        count: item[6],
+                        buyCount: item[7],
+                        flag: item[8]
                     })
                 }
             })
@@ -135,7 +143,9 @@ router.get('/exportProduct', (req, res, next) => {
         { caption: 'discount_price', type: 'string' },
         { caption: 'original_price', type: 'string' },
         { caption: 'prov_city', type: 'string' },
-        { caption: 'count', type: 'string' }
+        { caption: 'count', type: 'string' },
+        { caption: 'buyCount', type: 'string' },
+        { caption: 'flag', type: 'string' }
     ];
 
     sql.find('uqmei', 'product', {}).then(data => {
@@ -149,6 +159,8 @@ router.get('/exportProduct', (req, res, next) => {
             arr.push(item.original_price);
             arr.push(item.prov_city);
             arr.push(item.count);
+            arr.push(item.buyCount);
+            arr.push(item.flag);
             alldata.push(arr);
         })
         const result = filemd.exportdata(_headers, alldata);

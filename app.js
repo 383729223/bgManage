@@ -11,12 +11,32 @@ var apiUsersRouter = require('./api/users');
 var productRouter = require('./routes/product');
 var apiProductRouter = require('./api/product');
 var cartRouter = require('./routes/cart');
+var apiCartRouter = require('./api/cart');
 var bannerRouter = require('./routes/banner');
+var apiBannerRouter = require('./api/banner');
+
+
+// 小米商城接口
+var apiMiBannerRouter = require('./api/miApi/banner');
+var apiMiUsersRouter = require('./api/miApi/users');
+
+
+
+// var proxyMiddleWare = require("http-proxy-middleware");
 
 var app = express();
 
+
+// var proxyPath = "http://v.juhe.cn";
+// var proxyPath = "http://218.11.2.68";
+// var proxyOption = { target: proxyPath, changeOrigoin: true };
+// app.use(express.static("./public"));
+
+
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
+app.engine('html', require('ejs').__express);
 app.set('view engine', 'ejs');
 
 app.use(logger('dev'));
@@ -82,13 +102,31 @@ app.all('/banner/*', (req, res, next) => {
 
 
 
+// 跨域设置
+// app.all('*', function(req, res, next) { 
+//         res.header("Access-Control-Allow-Credentials", true); 
+//         res.header("Access-Control-Allow-Origin", "*"); 
+//         res.header("Access-Control-Allow-Headers", "X-Requested-With"); 
+//         res.header("Access-Control-Allow-Methods", "PUT,POST,GET,DELETE,OPTIONS"); 
+//         res.header("X-Powered-By", ' 3.2.1'); 
+//         res.header("Content-Type", "application/json;charset=utf-8"); 
+//         next();
+//     })
+// app.use("/", proxyMiddleWare(proxyOption))
+
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/api/users', apiUsersRouter);
 app.use('/cart', cartRouter);
 app.use('/product', productRouter);
 app.use('/api/product', apiProductRouter);
+app.use('/api/cart', apiCartRouter);
 app.use('/banner', bannerRouter);
+app.use('/api/banner', apiBannerRouter);
+
+// 小米商城接口
+app.use('/api/mi/banner', apiMiBannerRouter);
+app.use('/api/mi/users', apiMiUsersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
