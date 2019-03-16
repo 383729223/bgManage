@@ -25,7 +25,7 @@ router.get('/', function(req, res, next) {
     })
 });
 
-
+// 添加用户
 router.post('/addAction', function(req, res, next) {
     let { tel, username, password } = req.body;
     tel = tel * 1;
@@ -64,7 +64,9 @@ router.post('/addAction', function(req, res, next) {
 });
 // 删除
 router.get('/remove', function(req, res, next) {
-    const { tel } = req.query;
+    let { tel } = req.query;
+    // console.log(typeof(tel));
+    tel = tel * 1;
     sql.remove('mi', 'users', { tel }).then(() => {
         res.send({
             code: 200,
@@ -95,9 +97,9 @@ router.get('/removeAll', function(req, res, next) {
         })
     })
 });
-// 更新
+// 修改姓名
 router.post('/updateAction', function(req, res, next) {
-    let { tel, username, pageCode } = req.body;
+    let { tel, username } = req.body;
     tel = tel * 1;
     sql.update('mi', 'users', 'updateOne', { tel }, { $set: { username } })
         .then(() => {
@@ -114,21 +116,76 @@ router.post('/updateAction', function(req, res, next) {
             })
         })
 });
+// 修改密码
+router.post('/updateActionPassword', function(req, res, next) {
+    let { tel, password } = req.body;
+    tel = tel * 1;
+    password = md5(password);
+    sql.update('mi', 'users', 'updateOne', { tel }, { $set: { password } })
+        .then(() => {
+            res.send({
+                code: 200,
+                message: '成功',
+                data: 1
+            })
+        }).catch(err => {
+            res.send({
+                code: 200,
+                message: '失败',
+                data: 0
+            })
+        })
+});
 
-//模糊查询
-router.get('/search', (req, res, next) => {
-    const { username } = req.query;
-    sql.find('mi', 'users', { username: eval('/' + username + '/') }).then(data => {
+// 登录注册查询功能
+router.post('/search', (req, res, next) => {
+    let { tel, password } = req.body;
+    tel = tel * 1;
+    password = md5(password);
+    sql.find('mi', 'users', { tel }).then(data => {
+        // console.log(data[0])
+        if (data.length === 0) {
+            res.send({
+                code: 200,
+                message: '没有该手机号',
+                data: -1
+            })
+        } else {
+            if (data[0].password === password) {
+                res.send({
+                    code: 200,
+                    message: '登录成功',
+                    data: 1
+                })
+            } else {
+                res.send({
+                    code: 200,
+                    message: '密码错误',
+                    data: 0
+                })
+            }
+        }
+
+    })
+})
+
+//搜索用户
+router.get('/searchuser', function(req, res, next) {
+    let { tel } = req.query;
+    tel = tel * 1;
+    sql.find('mi', 'users', { tel }).then((data) => {
         res.send({
             code: 200,
             message: '成功',
             data: data
         })
-
+    }).catch((err) => {
+        res.send({
+            code: 200,
+            message: '失败',
+            data: 0
+        })
     })
-})
-
-
-
+});
 
 module.exports = router;

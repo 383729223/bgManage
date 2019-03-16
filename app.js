@@ -19,6 +19,8 @@ var apiBannerRouter = require('./api/banner');
 // 小米商城接口
 var apiMiBannerRouter = require('./api/miApi/banner');
 var apiMiUsersRouter = require('./api/miApi/users');
+var apiMiProductRouter = require('./api/miApi/product');
+var apiMiDetailRouter = require('./api/miApi/detail');
 
 
 
@@ -127,6 +129,8 @@ app.use('/api/banner', apiBannerRouter);
 // 小米商城接口
 app.use('/api/mi/banner', apiMiBannerRouter);
 app.use('/api/mi/users', apiMiUsersRouter);
+app.use('/api/mi/product', apiMiProductRouter);
+app.use('/api/mi/detail', apiMiDetailRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
