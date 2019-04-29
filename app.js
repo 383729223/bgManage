@@ -22,6 +22,10 @@ var apiMiUsersRouter = require('./api/miApi/users');
 var apiMiProductRouter = require('./api/miApi/product');
 var apiMiDetailRouter = require('./api/miApi/detail');
 
+// 小程序接口
+var apismallTimeRouter = require('./api/smallRoutine/timeDate');
+var apismallWeatherRouter = require('./api/smallRoutine/weather');
+var apismallMapRouter = require('./api/smallRoutine/txmap');
 
 
 // var proxyMiddleWare = require("http-proxy-middleware");
@@ -131,6 +135,13 @@ app.use('/api/mi/banner', apiMiBannerRouter);
 app.use('/api/mi/users', apiMiUsersRouter);
 app.use('/api/mi/product', apiMiProductRouter);
 app.use('/api/mi/detail', apiMiDetailRouter);
+
+
+// 小程序接口
+app.use('/api/small/time', apismallTimeRouter);
+app.use('/api/small/weather', apismallWeatherRouter);
+app.use('/api/small/map', apismallMapRouter);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
